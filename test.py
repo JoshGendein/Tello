@@ -1,14 +1,12 @@
-import keyboard
+import pygame
 
-def keyboard_down(input):
-    print('Down: ', input.name)
-
-def keyboard_release(input):
-    print('Release: ', input.name)
-
-if __name__ == "__main__":
-
-    keyboard.on_press(keyboard_down)
-    keyboard.on_release(keyboard_release)
-
-    keyboard.wait('esc')
+pygame.init()
+pygame.display.set_mode((500, 500))
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit(); #sys.exit() if sys is imported
+        if event.type == pygame.KEYDOWN:
+            print('Down ', event.key)
+        if event.type == pygame.KEYUP:
+            print('Up ', event.key)
