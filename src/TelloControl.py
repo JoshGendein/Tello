@@ -7,14 +7,6 @@ class TelloControl:
         self.local_addr = ('192.168.10.2', 9000)
         self.tello_addr = ('192.168.10.1', 8889)
 
-        #left/right, for/back, up/down, yaw
-        self.a = 0
-        self.b = 0
-        self.c = 0
-        self.d = 0
-
-        self.speed = 100
-
         #Socket for sending commands and receiving response
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind(self.local_addr)
@@ -31,60 +23,28 @@ class TelloControl:
             except Exception as e:
                 print(e)
                 break
-
-    def keyboard_down(self, input):
-        try:
-            key = input.char
-        except AttributeError:
-            key = input
-        if key == 't':
-            self.socket.sendto('takeoff'.encode('utf-8', self.tello_addr))
-            return True
-        elif key == 'l':
-            self.socket.sendto('land'.encode('utf-8', self.tello_addr))
-            return True
-        elif key == 'w':
-            self.b = self.speed
-        elif key == 's':
-            self.b = -(self.speed)
-        elif key == 'a':
-            self.a = -(self.speed)
-        elif key == 'd':
-            self.a = self.speed
-        elif key == keyboard.Key.right:
-            self.d = self.speed
-        elif key == keyboard.Key.left:
-            self.d = -(self.speed)
-        elif key == keyboard.Key.down:
-            self.c = -(self.speed)
-        elif key == keyboard.Key.up:
-            self.c = self.speed
-        msg = f'rc {self.a} {self.b} {self.c} {self.d}'
-        self.socket.sendto(msg.encode(encoding='utf-8'), self.tello_addr)
     
-    def keyboard_release(self, input):
-        if input == keyboard.Key.esc:
-            return False
-        try:
-            key = input.char
-        except AttributeError:
-            key = input
-        if key == 'w' or key == 's':
-            self.b = 0
-        elif key == 'a' or key == 'd':
-            self.a = 0
-        elif key == keyboard.Key.right or key == keyboard.Key.left:
-            self.d = 0
-        elif key == keyboard.Key.up or key == keyboard.Key.down:
-            self.c = 0
-        msg = f'rc {self.a} {self.b} {self.c} {self.d}'
-        self.socket.sendto(msg.encode(encoding='utf-8'), self.tello_addr)
+    def send_command(self, command):
+        self.socket.sendto(command.encode(encoding='utf-8'), self.tello_addr)
+
+    def takeoff(self):
+        self.send_command('takeoff')
 
     def connect(self):
-        self.socket.sendto('command', self.tello_addr)
+        self.send_command('command')
 
     def streamon(self):
-        self.socket.sendto('streamon', self.tello_addr)
+        self.send_command('streamon')
+
+    def streamoff(self):
+        self.send_command('streamoff')
+    
+    def land(self):
+        self.send_command('land')
+    
+    def send_rc(self, rc):
+        a, b, c, d = rc
+        self.send_command(f'rc {a} {b} {c} {d}')
 
     def stop(self):
         self.socket.close()
