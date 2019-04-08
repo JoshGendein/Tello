@@ -1,6 +1,5 @@
 import socket
 import threading
-from pynput import keyboard
 
 class TelloControl:
     def __init__(self):
