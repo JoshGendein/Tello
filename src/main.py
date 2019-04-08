@@ -1,6 +1,7 @@
 import pygame
 import cv2
 import time
+import numpy as np
 from TelloControl import TelloControl
 from TelloVideo import TelloVideo
 
@@ -72,7 +73,7 @@ if __name__ == '__main__':
             frame_read.stop()
             break
         
-        self.screen.fill([0, 0, 0])
+        screen.fill([0, 0, 0])
         frame = cv2.cvtColor(frame_read.frame, cv2.COLOR_BGR2RGB)
         frame = np.rot90(frame)
         frame = np.flipud(frame)
